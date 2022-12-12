@@ -178,6 +178,16 @@ bot.command("start", async (ctx) => {
   await ctx.conversation.enter("initial_tracker");
 });
 
+bot.command("experience_sampling_status", (ctx) => {
+  if (ctx.session.experience_sampling_running) {
+    ctx.reply("Experience sampling is running!");
+  } else if (!ctx.session.experience_sampling_running) {
+    ctx.reply("Experience sampling is not running!");
+  } else {
+    ctx.reply("There is an error with experience sampling.");
+  }
+});
+
 bot.command("start_experience_sampling", (ctx) => {
   if (ctx.session.experience_sampling_running) {
     ctx.reply("Experience sampling is already running!");
@@ -240,9 +250,10 @@ bot.command("show_future_prompts", (ctx) => {
   let futureprompts = ctx.session.prompts.find(isFuturePrompt);
   ctx.reply(JSON.stringify(futureprompts));
 });
+
 bot.on("message", (ctx) => {
   const message = ctx.message;
-  ctx.reply("Got another message!" + message.text);
+  ctx.reply("Got another message! " + message.text);
 });
 
 bot.catch((err) => console.error(err));

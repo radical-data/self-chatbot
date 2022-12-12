@@ -206,7 +206,7 @@ bot.command("random_times", (ctx) =>
 const aboutKeyboard = new InlineKeyboard()
   .url("Visit the Qself website", "https://qself.app")
   .row()
-  .url("Check out the code", "https://github.com/radical_data/qself");
+  .url("Check out the code", "https://github.com/radicaldataproject/qself");
 
 bot.command("about", (ctx) => {
   ctx.reply("Qself Bot is a chatbot built by Radical Data and Odd Studio.", {

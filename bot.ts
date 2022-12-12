@@ -17,22 +17,22 @@ let developer: boolean = false;
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
-const now = new Date();
-const inTenSeconds = new Date(now.getTime() + 10 * 1000);
-const inOneMinute = new Date(now.getTime() + 60 * 1000);
-const inFiveMinutes = new Date(now.getTime() + 5 * 60 * 1000);
+// const now = new Date();
+// const inTenSeconds = new Date(now.getTime() + 10 * 1000);
+// const inOneMinute = new Date(now.getTime() + 60 * 1000);
+// const inFiveMinutes = new Date(now.getTime() + 5 * 60 * 1000);
 
-let prompts = [now, inTenSeconds, inOneMinute, inFiveMinutes];
+// let prompts = [now, inTenSeconds, inOneMinute, inFiveMinutes];
 
 function initial(): SessionData {
   return {
     trackers: [],
-    // prompts: random_times(new Date(), 4).map(function (a) {
-    //   return { time: a };
-    // }),
-    prompts: prompts.map(function (a) {
+    prompts: random_times(new Date(), 4).map(function (a) {
       return { time: a };
     }),
+    // prompts: prompts.map(function (a) {
+    //   return { time: a };
+    // }),
     readings: [],
     experience_sampling_running: false,
   };

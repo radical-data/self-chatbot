@@ -272,8 +272,17 @@ function calculateWait(prompt: Prompt | undefined): number | undefined {
 
 function waitThenRespond(ctx: MyContext) {
   let next_prompt = findNextPrompt(ctx?.session.prompts);
+  if (next_prompt == undefined) {
+    let today = new Date();
+    let next_9_am = new Date();
+    next_9_am.setHours(today.getHours() < 9 ? 9 : 33, 0, 0, 0);
+    random_times(next_9_am, 4).map(function (a) {
+      ctx.session.prompts.push({ time: a });
+    });
+    next_prompt = findNextPrompt(ctx?.session.prompts);
+  }
   let wait = calculateWait(next_prompt);
-  if (typeof wait == "undefined") {
+  if (wait == undefined) {
     ctx.session.experience_sampling_running = false;
     ctx.reply("Experience sampling ended due to error.");
   } else {

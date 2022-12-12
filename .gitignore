@@ -89,3 +89,4 @@ tests/cases/user/prettier/prettier
 # project-specific
 config.ts
 exports
+dist

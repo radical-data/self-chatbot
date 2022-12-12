@@ -17,22 +17,22 @@ let developer: boolean = false;
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
-const now = new Date();
-const inTenSeconds = new Date(now.getTime() + 10 * 1000);
-const inOneMinute = new Date(now.getTime() + 60 * 1000);
-const inFiveMinutes = new Date(now.getTime() + 5 * 60 * 1000);
+// const now = new Date();
+// const inTenSeconds = new Date(now.getTime() + 10 * 1000);
+// const inOneMinute = new Date(now.getTime() + 60 * 1000);
+// const inFiveMinutes = new Date(now.getTime() + 5 * 60 * 1000);
 
-let prompts = [now, inTenSeconds, inOneMinute, inFiveMinutes];
+// let prompts = [now, inTenSeconds, inOneMinute, inFiveMinutes];
 
 function initial(): SessionData {
   return {
     trackers: [],
-    // prompts: random_times(new Date(), 4).map(function (a) {
-    //   return { time: a };
-    // }),
-    prompts: prompts.map(function (a) {
+    prompts: random_times(new Date(), 4).map(function (a) {
       return { time: a };
     }),
+    // prompts: prompts.map(function (a) {
+    //   return { time: a };
+    // }),
     readings: [],
     experience_sampling_running: false,
   };
@@ -42,6 +42,7 @@ bot.use(emojiParser());
 bot.use(conversations());
 bot.api.setMyCommands([
   { command: "start", description: "Start the bot" },
+  { command: "show_trackers", description: "Show all trackers" },
   {
     command: "start_experience_sampling",
     description: "Start experience sampling",
@@ -50,10 +51,13 @@ bot.api.setMyCommands([
     command: "stop_experience_sampling",
     description: "Stop experience sampling",
   },
+  {
+    command: "experience_sampling_status",
+    description: "See if experience sampling is running",
+  },
   // { command: "track", description: "Take a reading of all your trackers" },
-  { command: "add_tracker", description: "Add a new thing to track" },
-  { command: "remove_tracker", description: "Remove a single tracker" },
-  { command: "show_trackers", description: "Show all trackers" },
+  // { command: "add_tracker", description: "Add a new thing to track" },
+  // { command: "remove_tracker", description: "Remove a single tracker" },
   { command: "about", description: "Show about text" },
   { command: "export", description: "Export all data" },
 ]);
@@ -115,11 +119,13 @@ async function initial_tracker(conversation: MyConversation, ctx: MyContext) {
   await ctx.reply("What would you like to track?");
   const initial_tracker = await conversation.form.text();
   if (!developer) {
-    ctx.reply(`Great, we'll start by tracking ${initial_tracker}!`);
+    ctx.reply(
+      `Great, we'll start by tracking ${initial_tracker.toLowerCase()}!`
+    );
     await conversation.sleep(2000);
     // ctx.reply(`What possible values should we give for ${initial_tracker}?`);
     ctx.reply(
-      `For now, we'll create the possible options for ${initial_tracker} as the numbers 0-10.`
+      `For now, we'll create the possible options for ${initial_tracker.toLowerCase()} as the numbers 0-10.`
     );
     await conversation.sleep(2000);
     ctx.reply(
@@ -153,10 +159,16 @@ async function initial_tracker(conversation: MyConversation, ctx: MyContext) {
       `So thanks for joining us here on Qself, our experiment in experimenting!`
     );
   }
-  if (ctx.session.experience_sampling_running) {
-  } else {
+  if (!conversation.session.experience_sampling_running) {
     waitThenRespond(ctx);
-    ctx.session.experience_sampling_running = true;
+    conversation.session.experience_sampling_running = true;
+    ctx.reply(
+      "Experience sampling is now running. You will be prompted 4 times each day."
+    );
+  } else {
+    ctx.reply(
+      "Experience sampling was already running. You will be prompted 4 times each day."
+    );
   }
 }
 
@@ -164,6 +176,16 @@ bot.use(createConversation(initial_tracker));
 
 bot.command("start", async (ctx) => {
   await ctx.conversation.enter("initial_tracker");
+});
+
+bot.command("experience_sampling_status", (ctx) => {
+  if (ctx.session.experience_sampling_running) {
+    ctx.reply("Experience sampling is running!");
+  } else if (!ctx.session.experience_sampling_running) {
+    ctx.reply("Experience sampling is not running!");
+  } else {
+    ctx.reply("There is an error with experience sampling.");
+  }
 });
 
 bot.command("start_experience_sampling", (ctx) => {
@@ -194,7 +216,7 @@ bot.command("random_times", (ctx) =>
 const aboutKeyboard = new InlineKeyboard()
   .url("Visit the Qself website", "https://qself.app")
   .row()
-  .url("Check out the code", "https://github.com/radical_data/qself");
+  .url("Check out the code", "https://github.com/radicaldataproject/qself");
 
 bot.command("about", (ctx) => {
   ctx.reply("Qself Bot is a chatbot built by Radical Data and Odd Studio.", {
@@ -228,9 +250,10 @@ bot.command("show_future_prompts", (ctx) => {
   let futureprompts = ctx.session.prompts.find(isFuturePrompt);
   ctx.reply(JSON.stringify(futureprompts));
 });
+
 bot.on("message", (ctx) => {
   const message = ctx.message;
-  ctx.reply("Got another message!" + message.text);
+  ctx.reply("Got another message! " + message.text);
 });
 
 bot.catch((err) => console.error(err));
@@ -260,8 +283,17 @@ function calculateWait(prompt: Prompt | undefined): number | undefined {
 
 function waitThenRespond(ctx: MyContext) {
   let next_prompt = findNextPrompt(ctx?.session.prompts);
+  if (next_prompt == undefined) {
+    let today = new Date();
+    let next_9_am = new Date();
+    next_9_am.setHours(today.getHours() < 9 ? 9 : 33, 0, 0, 0);
+    random_times(next_9_am, 4).map(function (a) {
+      ctx.session.prompts.push({ time: a });
+    });
+    next_prompt = findNextPrompt(ctx?.session.prompts);
+  }
   let wait = calculateWait(next_prompt);
-  if (typeof wait == "undefined") {
+  if (wait == undefined) {
     ctx.session.experience_sampling_running = false;
     ctx.reply("Experience sampling ended due to error.");
   } else {

@@ -42,6 +42,7 @@ bot.use(emojiParser());
 bot.use(conversations());
 bot.api.setMyCommands([
   { command: "start", description: "Start the bot" },
+  { command: "show_trackers", description: "Show all trackers" },
   {
     command: "start_experience_sampling",
     description: "Start experience sampling",
@@ -50,10 +51,13 @@ bot.api.setMyCommands([
     command: "stop_experience_sampling",
     description: "Stop experience sampling",
   },
+  {
+    command: "experience_sampling_status",
+    description: "See if experience sampling is running",
+  },
   // { command: "track", description: "Take a reading of all your trackers" },
-  { command: "add_tracker", description: "Add a new thing to track" },
-  { command: "remove_tracker", description: "Remove a single tracker" },
-  { command: "show_trackers", description: "Show all trackers" },
+  // { command: "add_tracker", description: "Add a new thing to track" },
+  // { command: "remove_tracker", description: "Remove a single tracker" },
   { command: "about", description: "Show about text" },
   { command: "export", description: "Export all data" },
 ]);

@@ -119,11 +119,13 @@ async function initial_tracker(conversation: MyConversation, ctx: MyContext) {
   await ctx.reply("What would you like to track?");
   const initial_tracker = await conversation.form.text();
   if (!developer) {
-    ctx.reply(`Great, we'll start by tracking ${initial_tracker}!`);
+    ctx.reply(
+      `Great, we'll start by tracking ${initial_tracker.toLowerCase()}!`
+    );
     await conversation.sleep(2000);
     // ctx.reply(`What possible values should we give for ${initial_tracker}?`);
     ctx.reply(
-      `For now, we'll create the possible options for ${initial_tracker} as the numbers 0-10.`
+      `For now, we'll create the possible options for ${initial_tracker.toLowerCase()} as the numbers 0-10.`
     );
     await conversation.sleep(2000);
     ctx.reply(
@@ -157,10 +159,16 @@ async function initial_tracker(conversation: MyConversation, ctx: MyContext) {
       `So thanks for joining us here on Qself, our experiment in experimenting!`
     );
   }
-  if (ctx.session.experience_sampling_running) {
-  } else {
+  if (!conversation.session.experience_sampling_running) {
     waitThenRespond(ctx);
-    ctx.session.experience_sampling_running = true;
+    conversation.session.experience_sampling_running = true;
+    ctx.reply(
+      "Experience sampling is now running. You will be prompted 4 times each day."
+    );
+  } else {
+    ctx.reply(
+      "Experience sampling was already running. You will be prompted 4 times each day."
+    );
   }
 }
 

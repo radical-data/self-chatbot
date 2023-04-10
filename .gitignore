@@ -87,6 +87,6 @@ tests/cases/user/prettier/prettier
 .eslintcache
 
 # project-specific
-config.ts
+src/config.ts
 exports
 dist

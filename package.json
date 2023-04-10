@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "npx nodemon bot.ts --ignore ./exports/",
+    "dev": "npx nodemon src/bot.ts --ignore ./exports/",
     "build": "npx tsc",
     "compile": "npx tsc"
   },

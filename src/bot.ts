@@ -21,14 +21,11 @@ import {
 import { add_tracker } from "./manage_trackers";
 import { onboarding_conversation } from "./onboarding";
 import { add_tracker_conversation } from "./conversations";
-import { initial_data } from "./initial_data";
+import { createInitialSessionData } from "./initial_data";
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
-function initial(): SessionData {
-  return initial_data;
-}
-bot.use(session({ initial }));
+bot.use(session({ initial: createInitialSessionData }));
 bot.use(emojiParser());
 bot.use(conversations());
 bot.use(homeMenu);

@@ -30,6 +30,7 @@ interface SessionData {
   trackers: Array<Tracker>;
   prompts: Array<Prompt>;
   experience_sampling_running: boolean;
+  current_tracker_menu: Tracker;
 }
 
 export { Tracker, Prompt, SessionData, MyContext, MyConversation };

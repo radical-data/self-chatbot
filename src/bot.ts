@@ -25,14 +25,13 @@ import { initial_data } from "./initial_data";
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
-bot.use(homeMenu);
-
 function initial(): SessionData {
   return initial_data;
 }
 bot.use(session({ initial }));
 bot.use(emojiParser());
 bot.use(conversations());
+bot.use(homeMenu);
 bot.api.setMyCommands([
   { command: "menu", description: "The main menu" },
   { command: "check_in", description: "Input data" },

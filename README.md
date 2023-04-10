@@ -1,4 +1,4 @@
-# Qself Bot
+# Self Bot
 
 _A Telegram chatbot to support learning about our bodies with data._
 
@@ -6,7 +6,7 @@ _A Telegram chatbot to support learning about our bodies with data._
 
 ### Interact
 
-You can interact for free with a deployed version of the chatbot [here](https://t.me/qselfchatbot).
+You can interact for free with a deployed version of the chatbot at [@self_chatbot](https://t.me/self_chatbot).
 
 ### Build
 

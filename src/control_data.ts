@@ -1,7 +1,7 @@
 import { MyContext } from "./types";
 import { InputFile } from "grammy";
 import { writeFile } from "fs";
-import { initial_data } from "./initial_data";
+import { createInitialSessionData } from "./initial_data";
 
 function formatDate(): string {
   const date = new Date();
@@ -25,6 +25,11 @@ export function downloadData(ctx: MyContext): void {
   ctx.replyWithDocument(new InputFile(path));
 }
 
-export function deleteData(ctx: MyContext): void {
-  ctx.session = initial_data;
+export async function deleteData(ctx: MyContext): Promise<void> {
+  ctx.session = createInitialSessionData();
+  ctx.reply(
+    "We've deleted all your data! " +
+      ctx.emoji`${"bomb"}` +
+      ctx.emoji`${"collision"}`
+  );
 }

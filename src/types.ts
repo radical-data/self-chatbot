@@ -19,6 +19,7 @@ interface Reading {
 interface Tracker {
   name: string;
   possible_values: Array<string>;
+  sample_type: "random" | "open";
 }
 
 interface Prompt {

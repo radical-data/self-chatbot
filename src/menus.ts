@@ -1,12 +1,13 @@
 import { Menu } from "@grammyjs/menu";
 import { MyContext } from "./types";
 import { MenuRange } from "@grammyjs/menu";
-import { downloadData } from "./control_data";
+import { deleteData, downloadData } from "./control_data";
+import { add_tracker_conversation } from "./conversations";
 
 export const homeMenu = new Menu<MyContext>("homeMenu")
   .submenu("Lab 🧪", "labMenu")
   //   .row()
-  .text("Check-in 📝", (ctx) => ctx.reply("Start check-in"))
+  .submenu("Check-in 📝", "checkInMenu")
   .row()
   .submenu("Resources 📚", "resourcesMenu")
   //   .row()
@@ -33,7 +34,9 @@ trackersMenu
     }
   })
   .row()
-  .text("New tracker ➕")
+  .text("New tracker ➕", (ctx) =>
+    ctx.conversation.enter("add_tracker_conversation")
+  )
   .row()
   .back("Go Back");
 
@@ -42,32 +45,44 @@ export const trackerMenu = new Menu<MyContext>("trackerMenu")
   .row()
   .text("Archive tracker")
   .row()
-  .text("Download tracker data");
-// .row()
-// .back("Go Back");
+  .back("Go Back");
 
 export const experimentsMenu = new Menu<MyContext>("experimentsMenu")
   .text("Edit experiment")
   .row()
   .text("Archive experiment")
   .row()
-  .text("Download experiment data")
-  .row()
   .back("Go Back");
 
 export const checkInMenu = new Menu<MyContext>("checkInMenu");
 checkInMenu
   .dynamic((ctx, range) => {
-    for (const i of ctx.session.trackers[0].possible_values) {
+    for (const tracker of ctx.session.trackers) {
       range
-        .text(i.toString(), (ctx) => {
-          ctx.reply(`You chose ${i} for ${ctx.session.trackers[0].name}.`);
+        .text(tracker.name.toString(), (ctx) => {
+          ctx.session.current_tracker_menu = tracker;
+          ctx.menu.nav("checkInMenuTracker");
+        })
+        .row();
+    }
+  })
+  .row()
+  .back("Done check-in", (ctx) => ctx.reply("See you at the next check-in!"));
+
+export const checkInMenuTracker = new Menu<MyContext>("checkInMenuTracker");
+checkInMenuTracker
+  .dynamic((ctx, range) => {
+    for (const value of ctx.session.current_tracker_menu.possible_values) {
+      range
+        .text(value.toString(), (ctx) => {
+          ctx.reply(
+            `You chose ${value} for ${ctx.session.current_tracker_menu.name}.`
+          );
           ctx.session.readings.push({
             time: new Date(),
             tracker_name: ctx.session.trackers[0].name,
-            value: i,
+            value: value,
           });
-          setTimeout(() => ctx.reply("See you at the next check-in!"), 1500);
         })
         .row();
     }
@@ -76,9 +91,7 @@ checkInMenu
   .back("Go Back");
 
 export const resourcesMenu = new Menu<MyContext>("resourcesMenu")
-  .text("Check out our resources", (ctx) =>
-    ctx.reply("https://theselfapp.com/resources")
-  )
+  .url("Check out our resources", "https://theselfapp.com/resources")
   .row()
   .back("Go Back");
 
@@ -91,7 +104,7 @@ export const profileMenu = new Menu<MyContext>("profileMenu")
 export const controlDataMenu = new Menu<MyContext>("controlDataMenu")
   .text("Download My Data ⬇️", (ctx) => downloadData(ctx))
   .row()
-  .submenu("Delete My Data ⚠️", "deleteDataMenu")
+  .text("Delete My Data ⚠️", (ctx) => deleteData(ctx))
   .row()
   .back("Go Back");
 
@@ -116,6 +129,7 @@ homeMenu.register(trackersMenu, "labMenu");
 homeMenu.register(trackerMenu, "trackersMenu");
 homeMenu.register(experimentsMenu, "labMenu");
 homeMenu.register(checkInMenu);
+homeMenu.register(checkInMenuTracker, "checkInMenu");
 homeMenu.register(resourcesMenu);
 homeMenu.register(profileMenu);
 homeMenu.register(controlDataMenu, "profileMenu");

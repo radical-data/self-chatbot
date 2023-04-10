@@ -18,21 +18,18 @@ import {
   profileMenu,
   aboutMenu,
 } from "./menus";
-import { add_tracker } from "./manage_trackers";
 import { onboarding_conversation } from "./onboarding";
 import { add_tracker_conversation } from "./conversations";
-import { initial_data } from "./initial_data";
+import { createInitialSessionData } from "./initial_data";
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
-bot.use(homeMenu);
-
-function initial(): SessionData {
-  return initial_data;
-}
-bot.use(session({ initial }));
+bot.use(session({ initial: createInitialSessionData }));
 bot.use(emojiParser());
 bot.use(conversations());
+bot.use(createConversation(onboarding_conversation));
+bot.use(createConversation(add_tracker_conversation));
+bot.use(homeMenu);
 bot.api.setMyCommands([
   { command: "menu", description: "The main menu" },
   { command: "check_in", description: "Input data" },
@@ -57,9 +54,6 @@ bot.api.setMyCommands([
   { command: "about", description: "Show about text" },
   { command: "download_data", description: "Download all data" },
 ]);
-
-bot.use(createConversation(onboarding_conversation));
-bot.use(createConversation(add_tracker_conversation));
 
 bot.command("start", async (ctx) => {
   await ctx.conversation.enter("onboarding_conversation");

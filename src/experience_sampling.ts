@@ -2,13 +2,6 @@ import { Prompt } from "./types";
 import { respond } from "./notifications";
 import { MyContext } from "./types";
 
-// const now = new Date();
-// const inTenSeconds = new Date(now.getTime() + 10 * 1000);
-// const inOneMinute = new Date(now.getTime() + 60 * 1000);
-// const inFiveMinutes = new Date(now.getTime() + 5 * 60 * 1000);
-
-// let prompts = [now, inTenSeconds, inOneMinute, inFiveMinutes];
-
 export function random_times(day: Date, number_of_times: number): Array<Date> {
   let dates: Array<Date> = [];
   let day_ = new Date(day);
@@ -58,6 +51,19 @@ export function calculateWait(prompt: Prompt | undefined): number | undefined {
   }
 }
 
+function formatDate(date: Date | undefined): string {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZoneName: "short",
+  };
+  return new Intl.DateTimeFormat("en-UK", options).format(date);
+}
+
 export function waitThenRespond(ctx: MyContext) {
   let next_prompt = findNextPrompt(ctx?.session.prompts);
   if (next_prompt == undefined) {
@@ -75,7 +81,7 @@ export function waitThenRespond(ctx: MyContext) {
     ctx.reply("Experience sampling ended due to error.");
   } else {
     console.log(
-      `waiting ${wait / 1000} seconds until ${JSON.stringify(
+      `waiting ${wait / 1000} seconds until ${formatDate(
         next_prompt?.time
       )} to prompt user id ${ctx.msg?.chat.id}`
     );

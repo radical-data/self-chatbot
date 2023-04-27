@@ -1,5 +1,5 @@
 import { random_times } from "./experience_sampling";
-import { Prompt, SessionData, Tracker } from "./types";
+import { SessionData, Tracker } from "./types";
 
 const now = new Date();
 const inTenSeconds = new Date(now.getTime() + 10 * 1000);
@@ -19,7 +19,10 @@ export function createInitialSessionData(): SessionData {
     //   return { time: a };
     // }),
     readings: [],
-    experience_sampling_running: false,
+    profile_settings: {
+      defaultPromptsPerDay: 4,
+      experience_sampling_running: false,
+    },
     current_tracker_menu: {
       name: "",
       possible_values: [],

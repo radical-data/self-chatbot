@@ -26,11 +26,16 @@ interface Prompt {
   time: Date;
 }
 
+interface ProfileSettings {
+  defaultPromptsPerDay: number;
+  experience_sampling_running: boolean;
+}
+
 interface SessionData {
   readings: Array<Reading>;
   trackers: Array<Tracker>;
   prompts: Array<Prompt>;
-  experience_sampling_running: boolean;
+  profile_settings: ProfileSettings;
   current_tracker_menu: Tracker;
 }
 

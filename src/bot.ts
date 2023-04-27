@@ -2,7 +2,7 @@ import { Bot, session, GrammyError, HttpError } from "grammy";
 import { emojiParser } from "@grammyjs/emoji";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import { BOT_TOKEN } from "./config";
-import { Tracker, SessionData, MyContext, MyConversation } from "./types";
+import { MyContext } from "./types";
 import { deleteData, downloadData } from "./control_data";
 import {
   random_times,
@@ -56,6 +56,11 @@ bot.api.setMyCommands([
 ]);
 
 bot.command("start", async (ctx) => {
+  console.log(`New instance started by ID ${ctx.from?.id}`);
+  if (!ctx.session.experience_sampling_running) {
+    waitThenRespond(ctx);
+    ctx.session.experience_sampling_running = true;
+  }
   await ctx.conversation.enter("onboarding_conversation");
 });
 

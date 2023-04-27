@@ -1,8 +1,6 @@
 import { Menu } from "@grammyjs/menu";
 import { MyContext } from "./types";
-import { MenuRange } from "@grammyjs/menu";
 import { deleteData, downloadData } from "./control_data";
-import { add_tracker_conversation } from "./conversations";
 
 export const homeMenu = new Menu<MyContext>("homeMenu")
   .submenu("Lab 🧪", "labMenu")

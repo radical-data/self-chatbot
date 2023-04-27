@@ -2,7 +2,8 @@
   "scripts": {
     "dev": "npx nodemon src/bot.ts --ignore ./exports/",
     "build": "npx tsc",
-    "compile": "npx tsc"
+    "compile": "npx tsc",
+    "start": "npx nodemon src/bot.ts --ignore ./exports/"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",

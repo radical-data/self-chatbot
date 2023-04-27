@@ -1,8 +1,5 @@
 import { MyConversation, MyContext, Tracker } from "./types";
-import { homeMenu } from "./menus";
-import { Keyboard } from "grammy";
 import { trackerRangeKeyboard, trackerSampleTypeKeyboard } from "./keyboards";
-import { error } from "console";
 
 export async function add_tracker_conversation(
   conversation: MyConversation,

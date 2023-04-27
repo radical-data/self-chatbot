@@ -90,3 +90,4 @@ tests/cases/user/prettier/prettier
 src/config.ts
 exports
 dist
+.env

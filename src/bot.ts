@@ -1,8 +1,11 @@
 import { Bot, session, GrammyError, HttpError } from "grammy";
 import { emojiParser } from "@grammyjs/emoji";
 import { conversations, createConversation } from "@grammyjs/conversations";
-import { BOT_TOKEN } from "./config";
 import { MyContext } from "./types";
+// import { BOT_TOKEN } from "./config";
+import { config } from "dotenv";
+config(); // Load environment variables from .env file
+import { MyContext, SessionData } from "./types";
 import { deleteData, downloadData } from "./control_data";
 import {
   random_times,
@@ -21,6 +24,15 @@ import {
 import { onboarding_conversation } from "./onboarding";
 import { add_tracker_conversation } from "./conversations";
 import { createInitialSessionData } from "./initial_data";
+
+function toString(value: undefined | string): string {
+  if (value === undefined) {
+    return "";
+  } else {
+    return value;
+  }
+}
+let BOT_TOKEN = toString(process.env.BOT_TOKEN);
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 

@@ -2,7 +2,7 @@ import { Bot, session, GrammyError, HttpError } from "grammy";
 import { emojiParser } from "@grammyjs/emoji";
 import { conversations, createConversation } from "@grammyjs/conversations";
 import { config } from "dotenv";
-config(); // Load environment variables from .env file
+config();
 import { MyContext, SessionData } from "./types";
 import { deleteData, downloadData } from "./control_data";
 import { freeStorage } from "@grammyjs/storage-free";

@@ -77,7 +77,7 @@ export function waitThenRespond(ctx: MyContext) {
   }
   let wait = calculateWait(next_prompt);
   if (wait == undefined) {
-    ctx.session.experience_sampling_running = false;
+    ctx.session.profile_settings.experience_sampling_running = false;
     ctx.reply("Experience sampling ended due to error.");
   } else {
     console.log(

@@ -1,12 +1,11 @@
 import { Bot, session, GrammyError, HttpError } from "grammy";
 import { emojiParser } from "@grammyjs/emoji";
 import { conversations, createConversation } from "@grammyjs/conversations";
-import { MyContext } from "./types";
-// import { BOT_TOKEN } from "./config";
 import { config } from "dotenv";
 config(); // Load environment variables from .env file
 import { MyContext, SessionData } from "./types";
 import { deleteData, downloadData } from "./control_data";
+import { freeStorage } from "@grammyjs/storage-free";
 import {
   random_times,
   waitThenRespond,
@@ -36,7 +35,12 @@ let BOT_TOKEN = toString(process.env.BOT_TOKEN);
 
 const bot = new Bot<MyContext>(BOT_TOKEN);
 
-bot.use(session({ initial: createInitialSessionData }));
+bot.use(
+  session({
+    initial: createInitialSessionData,
+    storage: freeStorage<SessionData>(bot.token),
+  })
+);
 bot.use(emojiParser());
 bot.use(conversations());
 bot.use(createConversation(onboarding_conversation));
@@ -69,17 +73,17 @@ bot.api.setMyCommands([
 
 bot.command("start", async (ctx) => {
   console.log(`New instance started by ID ${ctx.from?.id}`);
-  if (!ctx.session.experience_sampling_running) {
+  if (!ctx.session.profile_settings.experience_sampling_running) {
     waitThenRespond(ctx);
-    ctx.session.experience_sampling_running = true;
+    ctx.session.profile_settings.experience_sampling_running = true;
   }
   await ctx.conversation.enter("onboarding_conversation");
 });
 
 bot.command("experience_sampling_status", (ctx) => {
-  if (ctx.session.experience_sampling_running) {
+  if (ctx.session.profile_settings.experience_sampling_running) {
     ctx.reply("Experience sampling is running!");
-  } else if (!ctx.session.experience_sampling_running) {
+  } else if (!ctx.session.profile_settings.experience_sampling_running) {
     ctx.reply("Experience sampling is not running!");
   } else {
     ctx.reply("There is an error with experience sampling.");
@@ -87,18 +91,18 @@ bot.command("experience_sampling_status", (ctx) => {
 });
 
 bot.command("start_experience_sampling", (ctx) => {
-  if (ctx.session.experience_sampling_running) {
+  if (ctx.session.profile_settings.experience_sampling_running) {
     ctx.reply("Experience sampling is already running!");
   } else {
     waitThenRespond(ctx);
     ctx.reply("Experience sampling is now running!");
-    ctx.session.experience_sampling_running = true;
+    ctx.session.profile_settings.experience_sampling_running = true;
   }
 });
 
 bot.command("stop_experience_sampling", (ctx) => {
-  if (ctx.session.experience_sampling_running) {
-    ctx.session.experience_sampling_running = false;
+  if (ctx.session.profile_settings.experience_sampling_running) {
+    ctx.session.profile_settings.experience_sampling_running = false;
     ctx.reply("You have stopped experience sampling.");
   } else {
     ctx.reply("Experience sampling is already stopped!");

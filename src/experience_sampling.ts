@@ -29,8 +29,8 @@ export function random_time(
 }
 
 export function isFuturePrompt(prompt: Prompt): boolean {
-  const now = Date.now();
-  return prompt.time.getTime() > now;
+  const currentTime = new Date();
+  return prompt.time > currentTime;
 }
 
 export function findNextPrompt(
